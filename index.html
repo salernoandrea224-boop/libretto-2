@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#142a6b">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Libretto">
+<link id="apple-icon" rel="apple-touch-icon" href="">
+<title>Il mio libretto universitario</title>
+<style>
+:root{--bg:#eef1f6;--card:#fff;--ink:#142041;--mute:#5b6682;--line:#d9deea;--blue:#1d3a8a;--blue2:#e4e9f7;--gold:#b5832a;--bad:#b3261e;--ok:#1f7a4d}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1526;--card:#171f36;--ink:#e8ecf7;--mute:#9aa6c4;--line:#2b3555;--blue:#8fa8f5;--blue2:#222d52;--gold:#e0b25a;--bad:#ff8a80;--ok:#6fd3a0}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right)}
+h1,h2,.big{font-family:Georgia,"Times New Roman",serif;font-weight:600}
+header{background:#142a6b;color:#fff;padding:calc(28px + env(safe-area-inset-top)) 20px 22px}
+.wrap{max-width:1100px;margin:0 auto}
+header h1{margin:0;font-size:30px}
+header input{background:transparent;border:0;border-bottom:1px dashed #ffffff88;color:#fff;font:inherit;font-size:16px;padding:2px 0;width:min(420px,100%)}
+header input::placeholder{color:#ffffffaa}
+.prog{margin-top:16px;height:10px;background:#ffffff30;border-radius:6px;overflow:hidden}
+.prog i{display:block;height:100%;background:#f2c566;width:0;transition:width .4s}
+.proglbl{margin-top:6px;font-size:14px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+main{padding:20px}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:20px}
+.tile{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px}
+.tile .big{font-size:30px;line-height:1.1}
+.tile small{color:var(--mute)}
+.tile.hl{background:var(--blue);color:#fff;border-color:var(--blue)}
+.tile.hl small{color:#ffffffcc}
+@media (prefers-color-scheme:dark){.tile.hl{color:#0f1526}.tile.hl small{color:#0f1526cc}}
+.cols{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:20px;align-items:start}
+@media (max-width:860px){.cols{grid-template-columns:1fr}}
+section{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:20px}
+h2{margin:0 0 12px;font-size:20px}
+form{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;align-items:end}
+label{display:flex;flex-direction:column;font-size:13px;color:var(--mute);gap:3px}
+label.chk{flex-direction:row;align-items:center;gap:6px;color:var(--ink)}
+input,select{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:7px 8px;min-width:0;-webkit-appearance:none;appearance:none}
+input[type="checkbox"]{width:20px;height:20px;padding:0;-webkit-appearance:checkbox;appearance:checkbox}
+select{background-image:linear-gradient(45deg,transparent 50%,var(--mute) 50%),linear-gradient(135deg,var(--mute) 50%,transparent 50%);background-position:calc(100% - 14px) calc(50% + 2px),calc(100% - 9px) calc(50% + 2px);background-size:5px 5px,5px 5px;background-repeat:no-repeat;padding-right:26px}
+input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid var(--blue);outline-offset:1px}
+button{font:inherit;cursor:pointer;border-radius:6px;border:1px solid var(--blue);background:var(--blue);color:#fff;padding:8px 14px;touch-action:manipulation}
+@media (prefers-color-scheme:dark){button{color:#0f1526}}
+button.ghost{background:transparent;color:var(--blue)}
+button.sm{padding:3px 8px;font-size:13px}
+.full{grid-column:1/-1}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse}
+th,td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);white-space:nowrap}
+td.n{white-space:normal}
+th{font-size:13px;color:var(--mute);font-weight:500}
+td.num,th.num{text-align:right}
+.stamp{display:inline-block;border:1.5px solid var(--gold);color:var(--gold);border-radius:4px;padding:0 5px;font-size:12px;margin-left:6px;font-weight:600}
+.empty{color:var(--mute);padding:14px 0}
+.res{margin-top:10px;padding:10px;background:var(--blue2);border-radius:8px}
+.bad{color:var(--bad)}.ok{color:var(--ok)}
+svg{width:100%;height:auto;display:block}
+svg text{fill:var(--mute);font-size:11px;font-family:system-ui,sans-serif}
+#parts{background:var(--blue2);border-radius:8px;padding:10px}
+.prow{display:grid;grid-template-columns:1fr 70px 60px auto;gap:6px;margin-bottom:6px}
+.psum{font-size:14px;margin:8px 0 4px}
+.sub{display:block;color:var(--mute);font-size:12px}
+.app{display:grid;grid-template-columns:210px minmax(0,1fr);min-height:100vh;min-height:100dvh}
+.side{background:#0f1f52;color:#fff;padding:calc(20px + env(safe-area-inset-top)) 12px 20px;position:sticky;top:0;height:100vh;height:100dvh;display:flex;flex-direction:column;gap:6px}
+.side b{font-family:Georgia,"Times New Roman",serif;font-size:19px;padding:4px 10px 16px}
+.side button{background:transparent;border:0;color:#ffffffcc;text-align:left;padding:10px 12px;border-radius:8px}
+.side button:hover{background:#ffffff14}
+.side button[aria-current=page]{background:#ffffff26;color:#fff;font-weight:600}
+.side button:focus-visible{outline:2px solid #f2c566}
+@media (max-width:860px){.app{grid-template-columns:1fr}.side{position:static;height:auto;flex-direction:row;padding:8px;overflow-x:auto}.side b{display:none}.side button{white-space:nowrap}}
+.hbtn{background:transparent;color:#fff;border-color:#ffffff88}
+#dpick{width:auto;border:1px solid #ffffff88;border-radius:6px;padding:4px 6px;color-scheme:dark}
+.task{display:flex;align-items:center;gap:10px;padding:10px 4px;border-bottom:1px solid var(--line)}
+.task input{width:20px;height:20px;padding:0;accent-color:var(--blue);flex:none}
+.task label{flex:1;flex-direction:row;color:var(--ink);font-size:16px;gap:0;cursor:pointer}
+.task.done label{text-decoration:line-through;color:var(--mute)}
+.tag{font-size:12px;color:var(--blue);border:1px solid var(--blue);border-radius:10px;padding:0 7px;margin-left:8px;text-decoration:none;display:inline-block}
+[hidden]{display:none!important}
+.app.locked{display:none}
+#lock{position:fixed;inset:0;z-index:100;background:#0f1f52;display:flex;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:calc(20px + env(safe-area-inset-top)) 20px calc(20px + env(safe-area-inset-bottom))}
+#auth{background:var(--card);border-radius:14px;width:min(430px,100%);margin:auto;overflow:hidden}
+#authtop{padding:26px 24px 18px;color:#fff;text-align:center;transition:background .3s}
+#bname{font-family:Georgia,"Times New Roman",serif;font-size:21px;margin-top:10px}
+#bphrase{margin:8px 0 0;font-size:15px;font-style:italic;color:#ffffffe6;min-height:44px}
+#auth form{display:flex;flex-direction:column;gap:10px;padding:20px 24px 24px}
+#who{padding:0 10px 14px;font-size:13px;color:#ffffffaa}
+@media (max-width:860px){#who{display:none}}
+#lerr,#rerr{min-height:20px;font-size:14px}
+.app.onhome{display:none}
+#home{padding-bottom:calc(20px + env(safe-area-inset-bottom))}
+.htiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin-bottom:20px}
+.htile{display:flex;flex-direction:column;gap:6px;text-align:left;background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:12px;padding:20px;transition:border-color .15s,transform .15s}
+.htile:hover{border-color:var(--blue);transform:translateY(-2px)}
+.ht{font:600 22px Georgia,"Times New Roman",serif}
+.hs{color:var(--mute);font-size:14px}
+.chip{background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:20px;padding:6px 14px}
+.chip[aria-pressed=true]{background:var(--blue);color:#fff;border-color:var(--blue)}
+@media (prefers-color-scheme:dark){.chip[aria-pressed=true]{color:#0f1526}}
+@media (prefers-reduced-motion:reduce){.htile{transition:none}.htile:hover{transform:none}}
+.cg{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.cgh{font-size:12px;color:var(--mute);text-align:center;padding:2px 0}
+.cd{position:relative;aspect-ratio:1;min-height:40px;display:flex;align-items:flex-start;padding:5px 6px;background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:8px;font-size:14px;text-align:left}
+.cd.today{border-color:var(--blue);font-weight:700}
+.cd.sel{outline:2px solid var(--blue)}
+.cd.has{background:var(--blue2)}
+.cd.empty{visibility:hidden}
+.cdot{position:absolute;right:5px;bottom:4px;min-width:18px;height:18px;line-height:18px;text-align:center;border-radius:9px;background:var(--gold);color:#fff;font-size:11px;font-weight:700}
+.cg.mini .cd{min-height:0;aspect-ratio:auto;padding:4px 0;justify-content:center;font-size:12px;border:0;border-radius:6px;background:transparent}
+.cg.mini .cd.has{background:var(--gold);color:#fff;font-weight:700}
+.cg.mini .cd.today{outline:1.5px solid var(--blue)}
+.ex{display:flex;align-items:center;gap:10px;padding:10px 4px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.ex .when{min-width:70px;font-weight:600}
+.ex.past{color:var(--mute)}
+.cdn{font-size:13px;color:var(--blue)}
+.hcols{display:grid;grid-template-columns:minmax(220px,290px) 1fr;gap:20px;align-items:start}
+@media (max-width:700px){.hcols{grid-template-columns:1fr}}
+.foot{color:var(--mute);font-size:13px;text-align:center;padding:0 20px 30px}
+
+@media (max-width:860px){
+  input, select, button { font-size: 16px !important; }
+  .app { padding-bottom: calc(70px + env(safe-area-inset-bottom)); }
+  .side {
+    position: fixed; top: auto; bottom: 0; left: 0; right: 0;
+    height: auto; flex-direction: row; justify-content: space-around;
+    padding: 6px 4px calc(6px + env(safe-area-inset-bottom));
+    background: #0f1f52; box-shadow: 0 -4px 15px rgba(0,0,0,0.3);
+    z-index: 1000;
+  }
+  .side b, #who { display: none; }
+  .side button {
+    flex: 1; text-align: center; padding: 8px 2px; font-size: 11px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    border-radius: 8px; min-height: 48px;
+  }
+  .side button[data-nav="home"]::before { content: "🏠"; font-size: 18px; margin-bottom: 2px; }
+  .side button[data-nav="libretto"]::before { content: "🎓"; font-size: 18px; margin-bottom: 2px; }
+  .side button[data-nav="planner"]::before { content: "✅"; font-size: 18px; margin-bottom: 2px; }
+  .side button[data-nav="calendar"]::before { content: "📅"; font-size: 18px; margin-bottom: 2px; }
+  .side button[data-nav="profile"]::before { content: "👤"; font-size: 18px; margin-bottom: 2px; }
+  .side button[data-nav="settings"]::before { content: "⚙️"; font-size: 18px; margin-bottom: 2px; }
+
+  .tiles { grid-template-columns: repeat(2, 1fr); }
+  .tile .big { font-size: 24px; }
+}
+</style>
+</head>
+<body>
+<iframe name="authframe" title="" hidden></iframe>
+<div id="lock" hidden><div id="auth">
+<div id="authtop"><div id="blogo"></div><div id="bname"></div><p id="bphrase"></p></div>
+<form id="lform" method="post" action="about:blank" target="authframe" autocomplete="on">
+<label>E-mail<input id="lemail" name="email" type="email" required autocomplete="username"></label>
+<label>Password<input id="lcode" name="password" type="password" required autocomplete="current-password"></label>
+<label class="chk"><input type="checkbox" id="lkeep">Rimani connesso</label>
+<button type="submit">Accedi</button>
+<div id="lerr" class="bad" role="alert"></div>
+<button type="button" class="ghost sm" id="togreg">Non hai un profilo? Registrati</button>
+<button type="button" class="ghost sm" id="lforgot">Password dimenticata?</button>
+</form>
+<form id="rform" method="post" action="about:blank" target="authframe" autocomplete="on" hidden>
+<label>E-mail<input id="remail" name="email" type="email" required autocomplete="username"></label>
+<div class="row"><label style="flex:1;min-width:120px">Nome<input id="rnome" name="given-name" required maxlength="40" autocomplete="given-name"></label><label style="flex:1;min-width:120px">Cognome<input id="rcogn" name="family-name" required maxlength="40" autocomplete="family-name"></label></div>
+<label>Università<input id="runi" name="organization" autocomplete="organization" required maxlength="100" placeholder="Es. Università degli Studi di Bergamo"></label>
+<small id="rlogo" role="status" style="color:var(--mute);min-height:16px"></small>
+<label>Password (almeno 4 caratteri)<input id="rpw" name="password" type="password" required autocomplete="new-password"></label>
+<label>Ripeti la password<input id="rpw2" name="password2" type="password" required autocomplete="new-password"></label>
+<small id="lmig" hidden style="color:var(--mute)">Gli esami e il planning già presenti in questo browser verranno associati al nuovo profilo.</small>
+<button type="submit">Crea il profilo</button>
+<div id="rerr" class="bad" role="alert"></div>
+<button type="button" class="ghost sm" id="toglog">Hai già un profilo? Accedi</button>
+</form>
+</div></div>
+<div id="home" hidden>
+<header><div class="wrap row" style="align-items:center;gap:16px;flex-wrap:nowrap"><div id="hlogo" style="flex:none;width:64px"></div><div><h1 id="hhi"></h1><p id="hphr" style="margin:4px 0 0;font-style:italic;color:#ffffffe6"></p></div></div></header>
+<main class="wrap">
+<section>
+<h2 id="hmoodq"></h2><div class="row" id="hmood"></div><p id="hmoodr" role="status" style="margin:10px 0 0"></p>
+<h2 style="margin-top:20px">Quante ore vuoi studiare oggi?</h2><div class="row" id="hhours"></div><p id="hhoursr" role="status" style="margin:10px 0 0"></p>
+<h2 style="margin-top:20px">Qual è la tua priorità di oggi?</h2>
+<form id="hf" class="row"><input id="hprio" maxlength="120" placeholder="Es. Ripassare il capitolo 3 di Fisica" style="flex:1;min-width:200px" aria-label="Priorità di oggi"><button type="submit">Aggiungi al planning</button></form>
+<p id="hpmsg" role="status" class="ok" style="margin:10px 0 0"></p>
+</section>
+<section id="hcal">
+<h2>Il tuo calendario esami</h2>
+<p id="hexam" style="margin:0 0 14px;font-size:17px;font-style:italic"></p>
+<div class="hcols"><div id="hmini"></div><div id="hnext"></div></div>
+<p style="margin:14px 0 0"><button type="button" class="ghost sm" id="hopencal">Apri il calendario</button></p>
+</section>
+<div class="htiles" id="htiles"></div>
+<p style="text-align:center"><button type="button" class="ghost sm" id="hout">Esci dal profilo</button></p>
+</main>
+</div>
+<div class="app">
+<nav class="side" aria-label="Sezioni"><b>La mia carriera</b><div id="who"></div>
+<button type="button" data-nav="home">Home</button>
+<button type="button" data-nav="libretto">Libretto</button>
+<button type="button" data-nav="planner">Planning giornaliero</button>
+<button type="button" data-nav="calendar">Calendario</button>
+<button type="button" data-nav="profile">Profilo</button>
+<button type="button" data-nav="settings">Impostazioni</button>
+</nav>
+<div class="content">
+<div class="view" id="v-libretto">
+<header><div class="wrap">
+<h1>Il mio libretto</h1>
+<input id="corso" placeholder="Nome del corso di laurea e università" aria-label="Corso di laurea">
+<div class="prog"><i id="bar"></i></div>
+<div class="proglbl"><span id="proglbl"></span><span>CFU totali del corso: <input id="cfuTot" type="number" min="1" style="width:64px;font-size:14px;text-align:center"></span></div>
+</div></header>
+
+<main class="wrap">
+<div class="tiles" id="tiles"></div>
+<div class="cols">
+<div>
+<section>
+<h2 id="ftitle">Aggiungi un esame</h2>
+<form id="f">
+<label class="full">Esame<input id="nome" required maxlength="80" placeholder="Es. Analisi matematica 1"></label>
+<label>CFU<input id="cfu" type="number" min="1" max="30" required></label>
+<label>Voto<input id="voto" type="number" min="18" max="30" ></label>
+<label>Data<input id="data" type="date"></label>
+<label class="chk"><input type="checkbox" id="lode">Lode</label>
+<label class="chk"><input type="checkbox" id="idoneo">Idoneità (senza voto)</label>
+<label class="chk"><input type="checkbox" id="split">Dividi in prove parziali</label>
+<div class="full" id="parts" hidden><div id="prows"></div><button type="button" class="ghost sm" id="addp">+ Aggiungi prova</button><div class="psum" id="psum"></div><small style="color:var(--mute)">Il voto finale è la media delle prove, arrotondata. Cambia il peso solo se una prova conta di più.</small></div>
+<div class="full row"><button type="submit" id="save">Salva esame</button><button type="button" class="ghost" id="cancel" hidden>Annulla modifica</button></div>
+</form>
+</section>
+<section>
+<h2>Esami sostenuti</h2>
+<div class="scroll" id="list"></div>
+</section>
+</div>
+
+<div>
+<section>
+<h2>Distribuzione dei voti</h2>
+<div id="dist"></div>
+</section>
+<section>
+<h2>Andamento della media</h2>
+<div id="trend"></div>
+</section>
+<section>
+<h2>Simulatore</h2>
+<form id="sim1">
+<label>CFU esame<input id="sc" type="number" min="1" max="30" value="9"></label>
+<label>Voto previsto<input id="sv" type="number" min="18" max="30" value="27"></label>
+</form>
+<div class="res" id="r1"></div>
+<form id="sim2" style="margin-top:14px">
+<label class="full">Media ponderata che vuoi ottenere<input id="tm" type="number" min="18" max="30" step="0.1" value="27"></label>
+</form>
+<div class="res" id="r2"></div>
+</section>
+<section>
+<h2>Lode e backup</h2>
+<label style="margin-bottom:10px">Valore della lode nella media
+<select id="lodeVal"><option value="30">30</option><option value="31">31</option><option value="32">32</option><option value="33">33</option></select></label>
+<div class="row"><button class="ghost" id="exp" type="button">Scarica backup</button><button class="ghost" id="imp" type="button">Carica backup</button><input type="file" id="file" accept=".json,application/json" hidden></div>
+</section>
+</div>
+</div>
+</main>
+<p class="foot">I dati (libretto e planning) restano salvati in questo browser. Scarica ogni tanto un backup per non perderli.</p>
+</div>
+
+<div class="view" id="v-planner" hidden>
+<header><div class="wrap">
+<h1>Planning giornaliero</h1>
+<div class="row" style="margin-top:12px;align-items:center">
+<button type="button" class="hbtn sm" id="dprev" aria-label="Giorno precedente">‹</button>
+<span id="dlabel" style="font-size:18px;min-width:230px;text-align:center"></span>
+<button type="button" class="hbtn sm" id="dnext" aria-label="Giorno successivo">›</button>
+<button type="button" class="hbtn sm" id="dtoday">Oggi</button>
+<input type="date" id="dpick" aria-label="Scegli un giorno">
+</div>
+<div class="prog"><i id="pbar"></i></div>
+<div class="proglbl"><span id="plbl"></span></div>
+</div></header>
+<main class="wrap">
+<section>
+<h2>Aggiungi un’attività</h2>
+<form id="tf">
+<label class="full">Cosa devi fare<input id="ttext" required maxlength="120" placeholder="Es. Ripassare due capitoli di Fisica"></label>
+<label class="chk"><input type="checkbox" id="tdaily">Ripeti ogni giorno</label>
+<div><button type="submit">Aggiungi</button></div>
+</form>
+</section>
+<section>
+<h2>Attività del giorno</h2>
+<div id="tlist"></div>
+</section>
+</main>
+</div>
+
+<div class="view" id="v-calendar" hidden>
+<header><div class="wrap"><h1>Calendario</h1>
+<div class="row" style="margin-top:12px;align-items:center"><button type="button" class="hbtn sm" id="cprev" aria-label="Mese precedente">‹</button><span id="clabel" style="font-size:18px;min-width:180px;text-align:center"></span><button type="button" class="hbtn sm" id="cnext" aria-label="Mese successivo">›</button><button type="button" class="hbtn sm" id="ctoday">Oggi</button></div>
+</div></header>
+<main class="wrap">
+<div class="cols">
+<div>
+<section><div id="cgrid"></div><p id="cday" style="margin:12px 0 0"></p></section>
+<section>
+<h2>Aggiungi un esame al calendario</h2>
+<form id="cf">
+<label class="full">Esame<input id="cnome" required maxlength="80" placeholder="Es. Analisi matematica 1"></label>
+<label>Data<input id="cdata" type="date" required></label>
+<label>Ora<input id="cora" type="time"></label>
+<label class="full">Note (aula, appello…)<input id="cnote" maxlength="80"></label>
+<div class="full row"><button type="submit">Aggiungi esame</button></div>
+</form>
+</section>
+</div>
+<div><section><h2>Esami in programma</h2><div id="clist"></div></section></div>
+</div>
+</main>
+</div>
+
+<div class="view" id="v-profile" hidden>
+<header><div class="wrap"><h1>Profilo</h1></div></header>
+<main class="wrap">
+<section>
+<div class="row" style="align-items:center;gap:16px;margin-bottom:16px"><div id="plogo" style="width:72px"></div><div><div class="big" id="pname" style="font-size:24px"></div><small id="pmail" style="color:var(--mute)"></small></div></div>
+<form id="pf">
+<label>Nome<input id="pnome" name="given-name" autocomplete="given-name" required maxlength="40"></label>
+<label>Cognome<input id="pcogn" name="family-name" autocomplete="family-name" required maxlength="40"></label>
+<label class="full">Università<input id="puni" name="organization" autocomplete="organization" required maxlength="100"></label>
+<label class="full">Logo dell’università (immagine)<input id="plf" type="file" accept="image/*"></label>
+<div class="full row"><button type="submit">Salva profilo</button><button type="button" class="ghost" id="plfind">Cerca logo online</button><button type="button" class="ghost" id="plrm">Rimuovi logo</button></div>
+<div class="full" id="pmsg" role="status"></div>
+</form>
+<p style="color:var(--mute);font-size:13px;margin-bottom:0">Nella schermata di accesso compaiono il logo e il nome della tua università. Il logo viene cercato online quando scrivi l’università (serve una connessione a internet). Se non lo trova o è sbagliato, caricalo tu dal dispositivo: in mancanza viene usato un emblema con le iniziali. L’e-mail non si può cambiare.</p>
+</section>
+</main>
+</div>
+
+<div class="view" id="v-settings" hidden>
+<header><div class="wrap"><h1>Impostazioni</h1></div></header>
+<main class="wrap">
+<section>
+<h2>Password</h2>
+<form id="lf" method="post" action="about:blank" target="authframe" autocomplete="on">
+<input type="text" id="lusr" name="email" autocomplete="username" tabindex="-1" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
+<label>Password attuale<input id="lcur" name="password" type="password" autocomplete="current-password"></label>
+<label>Nuova password (almeno 4 caratteri)<input id="lnew" name="new-password" type="password" autocomplete="new-password"></label>
+<label>Ripeti la nuova password<input id="lrep" type="password" autocomplete="new-password"></label>
+<div class="full row"><button type="submit">Cambia password</button></div>
+<div class="full" id="lmsg" role="status"></div>
+</form>
+</section>
+<section>
+<h2>Sessione</h2>
+<div class="row"><button type="button" id="lout">Esci dal profilo</button><button type="button" class="ghost" id="ldel">Elimina profilo e dati</button></div>
+<p style="color:var(--mute);font-size:13px;margin-bottom:0">Per eliminare il profilo scrivi prima la password attuale nel campo qui sopra. La password impedisce l’accesso a chi non la conosce, ma non cifra i dati salvati nel browser, e con “Rimani connesso” l’app si apre senza chiederla: non usarla per informazioni davvero riservate.</p>
+</section>
+</main>
+</div>
+</div></div>
+
+<script>
+let KEY=null;let cur=null;const LEGACY="libretto_v1";
+let S={corso:"",cfuTot:180,lodeVal:30,exams:[],tasks:[],view:"libretto"};
+let editing=null;
+const $=id=>document.getElementById(id);
+const storeGet=(st,k)=>{try{return st.getItem(k)}catch(e){return null}};
+const storeSet=(st,k,v)=>{try{st.setItem(k,v)}catch(e){}};
+const storeRem=(st,k)=>{try{st.removeItem(k)}catch(e){}};
+const save=()=>{if(!KEY)return;storeSet(localStorage,KEY,JSON.stringify(S))};
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fmt=(n,d=2)=>isFinite(n)?n.toLocaleString("it-IT",{minimumFractionDigits:d,maximumFractionDigits:d}):"–";
+const val=e=>e.lode?S.lodeVal:e.voto;
+const fdate=d=>d?new Date(d+"T12:00:00").toLocaleDateString("it-IT"):"–";
+
+function setAppleIcon(src){
+  const el=$("apple-icon");
+  if(!el)return;
+  if(src){el.href=src;return}
+  try{
+    const c=document.createElement("canvas");c.width=180;c.height=180;
+    const ctx=c.getContext("2d");
+    ctx.fillStyle="#142a6b";ctx.fillRect(0,0,180,180);
+    ctx.strokeStyle="#f2c566";ctx.lineWidth=6;ctx.strokeRect(14,14,152,152);
+    ctx.fillStyle="#ffffff";ctx.font="bold 76px Georgia,serif";ctx.textAlign="center";ctx.textBaseline="middle";
+    ctx.fillText("🎓",90,94);
+    el.href=c.toDataURL("image/png");
+  }catch(e){}
+}
+
+function stats(){
+  const g=S.exams.filter(e=>!e.idoneo);
+  const cfuG=g.reduce((a,e)=>a+e.cfu,0);
+  const sumW=g.reduce((a,e)=>a+val(e)*e.cfu,0);
+  const cfuAll=S.exams.reduce((a,e)=>a+e.cfu,0);
+  return{g,cfuG,sumW,cfuAll,pond:cfuG?sumW/cfuG:NaN,arit:g.length?g.reduce((a,e)=>a+val(e),0)/g.length:NaN};
+}
+
+function render(){
+  const st=stats();
+  $("corso").value=S.corso;$("cfuTot").value=S.cfuTot;$("lodeVal").value=S.lodeVal;
+  const pct=Math.min(100,st.cfuAll/S.cfuTot*100);
+  $("bar").style.width=pct+"%";
+  $("proglbl").textContent=`${st.cfuAll} CFU su ${S.cfuTot} (${fmt(pct,0)}%) · ne mancano ${Math.max(0,S.cfuTot-st.cfuAll)}`;
+  const vals=st.g.map(val);
+  const t=[
+    ["Media ponderata",fmt(st.pond),"in trentesimi",false],
+    ["Base di laurea",fmt(st.pond*110/30,1),"su 110 (stima)",true],
+    ["Media aritmetica",fmt(st.arit),"in trentesimi",false],
+    ["Esami sostenuti",S.exams.length,st.g.length+" con voto, "+(S.exams.length-st.g.length)+" idoneità",false],
+    ["Voto più alto",vals.length?(Math.max(...vals)>30?"30 e lode":Math.max(...vals)):"–",vals.length?"più basso: "+Math.min(...st.g.map(e=>e.voto)):"",false],
+    ["Lodi",S.exams.filter(e=>e.lode).length,"",false]
+  ];
+  $("tiles").innerHTML=t.map(x=>`<div class="tile${x[3]?" hl":""}"><small>${x[0]}</small><div class="big">${x[1]}</div><small>${x[2]}</small></div>`).join("");
+
+  const sorted=[...S.exams].sort((a,b)=>(b.data||"").localeCompare(a.data||""));
+  $("list").innerHTML=sorted.length?`<table><thead><tr><th>Data</th><th>Esame</th><th class="num">CFU</th><th class="num">Voto</th><th></th></tr></thead><tbody>`+
+   sorted.map(e=>`<tr><td>${fdate(e.data)}</td><td class="n">${esc(e.nome)}${e.parti?`<span class="sub">${e.parti.map(p=>(p.nome?esc(p.nome)+" ":"")+p.voto+(p.peso!=1?" (peso "+p.peso+")":"")).join(", ")}: media ${fmt(partAvg(e.parti))}</span>`:""}</td><td class="num">${e.cfu}</td><td class="num">${e.idoneo?"Idoneo":e.voto+(e.lode?'<span class="stamp">lode</span>':"")}</td><td class="num"><button class="ghost sm" data-ed="${e.id}">Modifica</button> <button class="ghost sm" data-del="${e.id}">Elimina</button></td></tr>`).join("")+`</tbody></table>`:
+   `<div class="empty">Nessun esame ancora. Aggiungi il primo dal modulo qui sopra.</div>`;
+
+  const bins=[];for(let v=18;v<=30;v++)bins.push({l:String(v),n:0});bins.push({l:"30L",n:0});
+  st.g.forEach(e=>{e.lode?bins[13].n++:bins[e.voto-18].n++});
+  const mx=Math.max(1,...bins.map(b=>b.n));
+  $("dist").innerHTML=st.g.length?`<svg viewBox="0 0 400 170">`+bins.map((b,i)=>{const h=b.n/mx*110,x=10+i*28;return `<rect x="${x}" y="${130-h}" width="22" height="${h}" rx="3" fill="${i==13?"var(--gold)":"var(--blue)"}"/><text x="${x+11}" y="147" text-anchor="middle">${b.l}</text>${b.n?`<text x="${x+11}" y="${125-h}" text-anchor="middle">${b.n}</text>`:""}`}).join("")+`</svg>`:`<div class="empty">Compare quando inserisci esami con voto.</div>`;
+
+  const dated=st.g.filter(e=>e.data).sort((a,b)=>a.data.localeCompare(b.data));
+  if(dated.length<2){$("trend").innerHTML=`<div class="empty">Servono almeno due esami con voto e data.</div>`}
+  else{
+    let sw=0,sc=0;const pts=dated.map(e=>{sw+=val(e)*e.cfu;sc+=e.cfu;return sw/sc});
+    const lo=Math.floor(Math.min(...pts))-1,hi=Math.ceil(Math.max(...pts))+1;
+    const X=i=>30+i*(350/(pts.length-1)),Y=v=>140-(v-lo)/(hi-lo)*120;
+    $("trend").innerHTML=`<svg viewBox="0 0 400 170"><text x="2" y="${Y(hi)+4}">${hi}</text><text x="2" y="${Y(lo)+4}">${lo}</text><line x1="26" x2="390" y1="${Y(lo)}" y2="${Y(lo)}" stroke="var(--line)"/><polyline fill="none" stroke="var(--blue)" stroke-width="2.5" points="${pts.map((v,i)=>X(i)+","+Y(v)).join(" ")}"/>`+
+      pts.map((v,i)=>`<circle cx="${X(i)}" cy="${Y(v)}" r="3.5" fill="var(--blue)"><title>${esc(dated[i].nome)}: ${fmt(v)}</title></circle>`).join("")+
+      `<text x="30" y="162">${fdate(dated[0].data)}</text><text x="380" y="162" text-anchor="end">${fdate(dated[dated.length-1].data)}</text></svg>`;
+  }
+  sim();
+}
+
+function sim(){
+  const st=stats(),c=+$("sc").value,v=+$("sv").value;
+  if(c>0&&v>=18&&v<=33){
+    const np=(st.sumW+v*c)/(st.cfuG+c);
+    const d=isFinite(st.pond)?np-st.pond:0;
+    $("r1").innerHTML=`Con ${v} in un esame da ${c} CFU la media diventa <b>${fmt(np)}</b> (<span class="${d>=0?"ok":"bad"}">${d>=0?"+":""}${fmt(d)}</span>), base di laurea <b>${fmt(np*110/30,1)}</b>.`;
+  }else $("r1").textContent="Inserisci CFU e un voto tra 18 e 30.";
+  const rem=S.cfuTot-st.cfuAll,tm=+$("tm").value;
+  if(rem<=0)$("r2").textContent="Hai già raggiunto tutti i CFU del corso.";
+  else if(tm>=18){
+    const need=(tm*(st.cfuG+rem)-st.sumW)/rem;
+    $("r2").innerHTML=need>30?`Con ${rem} CFU rimasti, per arrivare a ${fmt(tm,1)} servirebbe una media di <b class="bad">${fmt(need)}</b> sugli esami restanti: oltre 30, quindi servono lodi.`:
+      need<18?`Hai già margine: per una media di ${fmt(tm,1)} basta superare gli esami restanti (${rem} CFU).`:
+      `Con ${rem} CFU rimasti, per arrivare a ${fmt(tm,1)} ti serve una media di <b>${fmt(need)}</b> sugli esami restanti.`;
+  }else $("r2").textContent="Inserisci una media obiettivo tra 18 e 30.";
+}
+
+function resetForm(){editing=null;$("f").reset();$("ftitle").textContent="Aggiungi un esame";$("cancel").hidden=true;$("save").textContent="Salva esame";$("voto").disabled=false;$("voto").required=true;parts=[];$("parts").hidden=true;$("prows").innerHTML=""}
+function syncForm(){
+  const i=$("idoneo").checked;
+  if(i){$("split").checked=false;$("lode").checked=false;$("voto").value=""}
+  const sp=$("split").checked,l=$("lode").checked;
+  $("parts").hidden=!sp;
+  if(sp&&!parts.length){parts=[{nome:"",voto:"",peso:1},{nome:"",voto:"",peso:1}];renderParts()}
+  $("voto").disabled=i||sp;$("voto").required=!i&&!sp&&!l;
+  if(sp)calcParts();else if(l)$("voto").value=30;
+}
+let parts=[];
+function partAvg(ps){const v=ps.filter(p=>p.voto!==""&&!isNaN(+p.voto));const w=v.reduce((a,p)=>a+(+p.peso||1),0);return w?v.reduce((a,p)=>a+(+p.voto)*(+p.peso||1),0)/w:NaN}
+function calcParts(){
+  const a=partAvg(parts);
+  $("psum").innerHTML=isFinite(a)?`Media delle prove: <b>${fmt(a)}</b>, voto finale <b>${Math.round(a)}</b>`:"Inserisci il voto di almeno una prova.";
+  if($("split").checked&&isFinite(a))$("voto").value=Math.round(a);
+}
+function renderParts(){
+  $("prows").innerHTML=parts.map((p,i)=>`<div class="prow"><input data-i="${i}" data-k="nome" placeholder="Prova (es. Scritto)" value="${esc(p.nome)}" aria-label="Nome prova"><input data-i="${i}" data-k="voto" type="number" min="0" max="30" placeholder="Voto" value="${p.voto}" aria-label="Voto prova"><input data-i="${i}" data-k="peso" type="number" min="1" max="100" placeholder="Peso" value="${p.peso}" aria-label="Peso prova"><button type="button" class="ghost sm" data-rp="${i}" aria-label="Rimuovi prova">✕</button></div>`).join("");
+  calcParts();
+}
+$("prows").oninput=ev=>{const d=ev.target.dataset;if(d.k){parts[d.i][d.k]=ev.target.value;calcParts()}};
+$("prows").onclick=ev=>{const i=ev.target.dataset.rp;if(i!==undefined){parts.splice(+i,1);renderParts()}};
+$("addp").onclick=()=>{parts.push({nome:"",voto:"",peso:1});renderParts()};
+$("split").onchange=syncForm;
+$("idoneo").onchange=syncForm;$("lode").onchange=syncForm;
+$("voto").required=true;
+
+$("f").onsubmit=ev=>{
+  ev.preventDefault();syncForm();
+  const sp=$("split").checked;
+  const e={id:editing||Date.now().toString(36),nome:$("nome").value.trim(),cfu:+$("cfu").value,idoneo:$("idoneo").checked,lode:$("lode").checked,voto:$("idoneo").checked?null:+$("voto").value,data:$("data").value};
+  if(sp){e.parti=parts.filter(p=>p.voto!=="").map(p=>({nome:String(p.nome).trim(),voto:+p.voto,peso:+p.peso||1}));if(!e.parti.length){alert("Inserisci il voto di almeno una prova.");return}}
+  if(e.lode&&e.voto!==30){alert("La lode si può assegnare solo con 30.");return}
+  if(!e.idoneo&&(e.voto<18||e.voto>30)){alert("Il voto deve essere tra 18 e 30.");return}
+  const i=S.exams.findIndex(x=>x.id===e.id);
+  if(i>=0)S.exams[i]=e;else S.exams.push(e);
+  save();resetForm();render();
+};
+$("cancel").onclick=resetForm;
+$("list").onclick=ev=>{
+  const d=ev.target.dataset;
+  if(d.del&&confirm("Eliminare questo esame?")){S.exams=S.exams.filter(e=>e.id!==d.del);save();render()}
+  if(d.ed){const e=S.exams.find(x=>x.id===d.ed);editing=e.id;
+    $("nome").value=e.nome;$("cfu").value=e.cfu;$("voto").value=e.voto??"";$("data").value=e.data||"";$("lode").checked=e.lode;$("idoneo").checked=e.idoneo;$("split").checked=!!e.parti;parts=e.parti?e.parti.map(p=>({...p})):[];renderParts();
+    $("ftitle").textContent="Modifica esame";$("save").textContent="Aggiorna esame";$("cancel").hidden=false;syncForm();$("nome").focus();window.scrollTo({top:0,behavior:"smooth"})}
+};
+$("corso").oninput=e=>{S.corso=e.target.value;save()};
+$("cfuTot").onchange=e=>{S.cfuTot=Math.max(1,+e.target.value||180);save();render()};
+$("lodeVal").onchange=e=>{S.lodeVal=+e.target.value;save();render()};
+["sc","sv","tm"].forEach(id=>$(id).oninput=sim);
+$("sim1").onsubmit=$("sim2").onsubmit=e=>e.preventDefault();
+
+$("exp").onclick=()=>{
+  const a=document.createElement("a");
+  const url=URL.createObjectURL(new Blob([JSON.stringify(S,null,2)],{type:"application/json"}));
+  a.href=url;a.download="libretto-backup-"+new Date().toISOString().slice(0,10)+".json";
+  document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1500);
+};
+$("imp").onclick=()=>$("file").click();
+$("file").onchange=ev=>{
+  const f=ev.target.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=()=>{try{const d=JSON.parse(r.result);if(!Array.isArray(d.exams))throw 0;
+    if(confirm("Sostituire i dati attuali con quelli del backup?")){S=Object.assign({corso:"",cfuTot:180,lodeVal:30,exams:[],tasks:[],view:"libretto"},d);delete S.lock;save();render()}}
+    catch(e){alert("File di backup non valido.")}};
+  r.readAsText(f);ev.target.value="";
+};
+
+const iso=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+let day=iso(new Date());
+function shiftDay(n){const d=new Date(day+"T12:00:00");d.setDate(d.getDate()+n);day=iso(d);renderPlan()}
+function renderPlan(){
+  const ts=S.tasks.filter(t=>t.daily?day>=t.data:t.data===day);
+  const done=ts.filter(t=>t.done[day]).length;
+  const l=new Date(day+"T12:00:00").toLocaleDateString("it-IT",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
+  $("dlabel").textContent=l.charAt(0).toUpperCase()+l.slice(1);
+  $("dpick").value=day;
+  $("pbar").style.width=(ts.length?done/ts.length*100:0)+"%";
+  $("plbl").textContent=ts.length?`${done} di ${ts.length} fatte`+(done===ts.length?": giornata completata":""):"Nessuna attività per questo giorno";
+  $("tlist").innerHTML=ts.length?ts.map(t=>`<div class="task${t.done[day]?" done":""}"><input type="checkbox" id="t_${t.id}" data-t="${t.id}"${t.done[day]?" checked":""}><label for="t_${t.id}">${esc(t.testo)}${t.daily?'<span class="tag">ogni giorno</span>':""}</label><button type="button" class="ghost sm" data-tdel="${t.id}">Elimina</button></div>`).join(""):`<div class="empty">Nessuna attività. Aggiungi la prima con il modulo qui sopra.</div>`;
+}
+$("tlist").onchange=ev=>{const id=ev.target.dataset.t;if(!id)return;const t=S.tasks.find(x=>x.id===id);if(ev.target.checked)t.done[day]=true;else delete t.done[day];save();renderPlan()};
+$("tlist").onclick=ev=>{const id=ev.target.dataset.tdel;if(!id)return;const t=S.tasks.find(x=>x.id===id);if(confirm(t.daily?"Eliminare questa attività da tutti i giorni?":"Eliminare questa attività?")){S.tasks=S.tasks.filter(x=>x.id!==id);save();renderPlan()}};
+$("tf").onsubmit=ev=>{ev.preventDefault();const testo=$("ttext").value.trim();if(!testo)return;S.tasks.push({id:Date.now().toString(36),testo,daily:$("tdaily").checked,data:day,done:{}});save();$("ttext").value="";renderPlan();$("ttext").focus()};
+$("dprev").onclick=()=>shiftDay(-1);$("dnext").onclick=()=>shiftDay(1);
+$("dtoday").onclick=()=>{day=iso(new Date());renderPlan()};
+$("dpick").onchange=e=>{if(e.target.value){day=e.target.value;renderPlan()}};
+
+function show(v){
+  if(v==="home"){goHome();return}
+  if(!["planner","calendar","profile","settings"].includes(v))v="libretto";
+  S.view=v;save();
+  document.querySelectorAll(".side button").forEach(b=>{
+    const on=b.dataset.nav===v,vw=$("v-"+b.dataset.nav);if(!vw)return;vw.hidden=!on;
+    if(on)b.setAttribute("aria-current","page");else b.removeAttribute("aria-current");
+  });
+  window.scrollTo(0,0);
+  if(v==="planner")renderPlan();
+  if(v==="calendar")renderCal();
+  if(v==="profile")renderProf();
+  if(v==="settings")renderSet();
+}
+document.querySelector(".side").onclick=ev=>{const b=ev.target.closest("button");if(b)show(b.dataset.nav)};
+
+const PK="libretto_profiles",SK="libretto_session",LK="libretto_last",DK="libretto_data_";
+const getP=()=>{try{return JSON.parse(storeGet(localStorage,PK))||[]}catch(e){return[]}};
+const setP=a=>storeSet(localStorage,PK,JSON.stringify(a));
+const findP=em=>getP().find(p=>p.id===String(em).trim().toLowerCase());
+const legacyData=()=>{try{const r=storeGet(localStorage,LEGACY);return r?JSON.parse(r):null}catch(e){return null}};
+const rnd=()=>{try{return Array.from(crypto.getRandomValues(new Uint8Array(8)),x=>x.toString(16).padStart(2,"0")).join("")}catch(e){return Math.random().toString(16).slice(2)}};
+async function hc(code,salt,mode){
+  const data=salt+":"+code;
+  if(mode==="s"){const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(data));return "s"+Array.from(new Uint8Array(b),x=>x.toString(16).padStart(2,"0")).join("")}
+  let h=5381;for(const c of data)h=((h*33)^c.charCodeAt(0))>>>0;return "f"+h.toString(16);
+}
+async function checkPw(p,pw){try{return (await hc(pw,p.salt,p.hash[0]))===p.hash}catch(e){return false}}
+function toData(u){return new Promise(res=>{const im=new Image();im.crossOrigin="anonymous";
+  im.onload=()=>{try{const k=Math.min(1,256/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=Math.max(1,Math.round(im.width*k));c.height=Math.max(1,Math.round(im.height*k));c.getContext("2d").drawImage(im,0,0,c.width,c.height);res(c.toDataURL("image/png"))}catch(e){res("")}};
+  im.onerror=()=>res("");im.src=u;setTimeout(()=>res(""),8000)})}
+async function fetchLogo(name){
+  const ctl=new AbortController(),tm=setTimeout(()=>ctl.abort(),9000);
+  const J=async u=>{const r=await fetch(u,{signal:ctl.signal});if(!r.ok)throw 0;return r.json()};
+  const W="https://www.wikidata.org/w/api.php?format=json&origin=*&";
+  const ok=/universit|politecnic|ateneo|polytechnic|college|institut|istitut|school|scuola|accademia|academy/i;
+  try{
+    for(const lang of ["it","en"]){
+      const sr=await J(W+"action=wbsearchentities&type=item&limit=8&language="+lang+"&uselang="+lang+"&search="+encodeURIComponent(name));
+      const ids=(sr.search||[]).filter(x=>ok.test((x.description||"")+" "+(x.label||""))).map(x=>x.id);
+      if(!ids.length)continue;
+      const en=await J(W+"action=wbgetentities&props=claims&ids="+ids.join("|"));
+      for(const id of ids){
+        const c=((en.entities||{})[id]||{}).claims||{};
+        for(const pr of ["P154","P158","P94"]){
+          const f=c[pr]&&c[pr][0]&&c[pr][0].mainsnak&&c[pr][0].mainsnak.datavalue&&c[pr][0].mainsnak.datavalue.value;
+          if(!f)continue;
+          try{
+            const ci=await J("https://commons.wikimedia.org/w/api.php?action=query&format=json&origin=*&prop=imageinfo&iiprop=url&iiurlwidth=300&titles="+encodeURIComponent("File:"+f));
+            const pg=Object.values(ci.query.pages)[0],ii=pg&&pg.imageinfo&&pg.imageinfo[0];
+            if(ii){const d=await toData(ii.thumburl||ii.url);if(d)return d}
+          }catch(e){}
+        }
+      }
+    }
+  }catch(e){}finally{clearTimeout(tm)}
+  return "";
+}
+const newMode=()=>(window.crypto&&crypto.subtle)?"s":"f";
+function secure(form,fn){
+  let go=false;
+  form.addEventListener("submit",async ev=>{
+    if(go){go=false;return}
+    ev.preventDefault();
+    const after=await fn();
+    if(after){go=true;form.requestSubmit();after()}
+  });
+}
+async function storeCred(id,pw){try{if(window.PasswordCredential&&navigator.credentials&&navigator.credentials.store)await navigator.credentials.store(new PasswordCredential({id,password:pw,name:id}))}catch(e){}}
+
+const STOP=new Set(["università","universita","degli","studi","di","dei","del","della","delle","dello","the","of","e","and","la","il","lo","le","i","gli"]);
+function initials(n){let w=n.split(/[\s\-'’.,]+/).filter(Boolean);const k=w.filter(x=>!STOP.has(x.toLowerCase()));if(k.length)w=k;if(!w.length)return "U";return (w.length>1?w.slice(0,3).map(x=>x[0]).join(""):w[0].slice(0,2)).toUpperCase()}
+function hue(n){let h=0;for(const c of n.toLowerCase())h=(h*31+c.charCodeAt(0))%360;return h}
+function crest(n,logo,sz){
+  if(logo)return `<img src="${logo}" alt="Logo ${esc(n)}" style="display:block;margin:0 auto;width:${sz}px;height:${sz}px;object-fit:contain;border-radius:12px;background:#fff;padding:4px">`;
+  const t=initials(n||"Libretto"),h=hue(n||"Libretto");
+  return `<svg viewBox="0 0 100 100" role="img" aria-label="Emblema ${esc(n)}" style="width:${sz}px;height:${sz}px;margin:0 auto"><circle cx="50" cy="50" r="48" fill="hsl(${h} 55% 30%)"/><circle cx="50" cy="50" r="41" fill="none" stroke="#f2c566" stroke-width="2.5"/><text x="50" y="${t.length>2?60:63}" text-anchor="middle" style="fill:#fff;font:700 ${t.length>2?28:36}px Georgia,serif">${esc(t)}</text></svg>`;
+}
+const PH=["{n}, ogni pagina studiata oggi è un passo verso la tua laurea.","{n}, un esame alla volta: stai costruendo il tuo futuro.","Ogni 30 comincia con un’ora di studio, {n}.","{n}, non serve essere perfetti: basta iniziare e non fermarsi.","Fatica oggi, soddisfazione domani: ce la puoi fare, {n}!","{n}, la laurea si costruisce giorno dopo giorno, appunto dopo appunto.","Respira, organizza, studia: il tuo piano funziona, {n}.","{n}, studiare a {u} è un’opportunità: sfruttala al massimo.","{n}, gli sforzi di oggi saranno i traguardi di domani.","Piccoli passi ogni giorno, {n}: è così che si arriva fino in fondo."];
+const phrase=p=>PH[Math.floor(Math.random()*PH.length)].split("{n}").join(p.nome).split("{u}").join(p.uni);
+function paint(name,logo,text){
+  $("blogo").innerHTML=crest(name,logo,88);$("bname").textContent=name==="Libretto"?"La mia carriera":name;
+  $("bphrase").textContent=text;$("authtop").style.background=`hsl(${hue(name)} 55% 22%)`;
+}
+let brandId=null;
+function updateBrand(){const p=findP($("lemail").value),id=p?p.id:"";if(id===brandId)return;brandId=id;
+  p?paint(p.uni,p.logo,phrase(p)):paint("Libretto","","Accedi o crea un profilo per tenere traccia dei tuoi esami.");
+  setAppleIcon(p&&p.logo?p.logo:"")}
+$("lemail").oninput=updateBrand;
+let regLogo="",regFor="",regTimer=null,regTok=0;
+function regPaint(){const u=$("runi").value.trim();paint(u||"Libretto",regFor===u?regLogo:"","Crea il tuo profilo e tieni sotto controllo la tua carriera.")}
+async function regFind(){
+  const u=$("runi").value.trim();
+  if(u.length<4||regFor===u)return;
+  const tok=++regTok;$("rlogo").textContent="Cerco il logo…";
+  const lg=await fetchLogo(u);
+  if(tok!==regTok)return;
+  regFor=u;regLogo=lg;
+  $("rlogo").textContent=lg?"Logo trovato.":"Logo non trovato: userò un emblema con le iniziali (potrai caricare il logo dal Profilo).";
+  regPaint();
+}
+$("rform").oninput=ev=>{regPaint();if(ev&&ev.target&&ev.target.id==="runi"){clearTimeout(regTimer);regTimer=setTimeout(regFind,900)}};
+$("runi").onchange=regFind;
+
+function showAuth(reg){
+  KEY=null;cur=null;setAppleIcon("");
+  const ps=getP();reg=reg||!ps.length;
+  $("lock").hidden=false;$("home").hidden=true;document.querySelector(".app").classList.add("locked");regFor="";regLogo="";
+  $("lform").hidden=reg;$("rform").hidden=!reg;$("toglog").hidden=!ps.length;
+  $("lmig").hidden=!(legacyData()&&!ps.length);
+  $("lerr").textContent="";$("rerr").textContent="";$("lcode").value="";$("lkeep").checked=false;
+  const last=storeGet(localStorage,LK)||"";
+  $("lemail").value=last&&findP(last)?last:"";
+  brandId=null;
+  if(reg){$("rform").oninput();$("remail").focus()}else{updateBrand();($("lemail").value?$("lcode"):$("lemail")).focus()}
+}
+function enter(p,keep){
+  cur=p;KEY=DK+p.id;setAppleIcon(p.logo||"");
+  S={corso:"",cfuTot:180,lodeVal:30,exams:[],tasks:[],view:"libretto"};
+  try{const r=storeGet(localStorage,KEY);if(r)Object.assign(S,JSON.parse(r))}catch(e){}
+  delete S.lock;
+  storeSet(localStorage,LK,p.id);
+  if(keep){storeSet(localStorage,SK,p.id);storeRem(sessionStorage,SK)}
+  else{storeSet(sessionStorage,SK,p.id);storeRem(localStorage,SK)}
+  $("lock").hidden=true;document.querySelector(".app").classList.remove("locked");
+  resetForm();render();renderSet();renderProf();goHome();
+}
+function logout(){storeRem(localStorage,SK);storeRem(sessionStorage,SK);showAuth(false)}
+function delProfile(p){
+  setP(getP().filter(x=>x.id!==p.id));
+  storeRem(localStorage,DK+p.id);
+  if(storeGet(localStorage,LK)===p.id)storeRem(localStorage,LK);
+  [localStorage,sessionStorage].forEach(st=>{if(storeGet(st,SK)===p.id)storeRem(st,SK)});
+}
+
+secure($("lform"),async()=>{
+  const p=findP($("lemail").value),pw=$("lcode").value;
+  if(p&&await checkPw(p,pw)){const k=$("lkeep").checked;return()=>{storeCred(p.email,pw);enter(p,k);$("lcode").value=""}}
+  $("lerr").textContent="E-mail o password non corretti.";$("lcode").value="";$("lcode").focus();return null;
+});
+secure($("rform"),async()=>{
+  const em=$("remail").value.trim().toLowerCase(),pw=$("rpw").value,err=t=>{$("rerr").textContent=t;return null};
+  if(findP(em))return err("Esiste già un profilo con questa e-mail.");
+  if(pw.length<4)return err("La password deve avere almeno 4 caratteri.");
+  if(pw!==$("rpw2").value)return err("Le due password non coincidono.");
+  const salt=rnd(),uni=$("runi").value.trim();
+  let logo=regFor===uni?regLogo:"";if(!logo&&regFor!==uni)logo=await fetchLogo(uni);
+  const p={id:em,email:em,nome:$("rnome").value.trim(),cognome:$("rcogn").value.trim(),uni,logo,salt,hash:await hc(pw,salt,newMode())};
+  const old=getP().length?null:legacyData();
+  setP([...getP(),p]);
+  if(old){delete old.lock;storeSet(localStorage,DK+p.id,JSON.stringify(old));storeRem(localStorage,LEGACY)}
+  return()=>{storeCred(em,pw);$("rform").reset();enter(p,false)};
+});
+$("togreg").onclick=()=>showAuth(true);
+$("toglog").onclick=()=>showAuth(false);
+$("lforgot").onclick=()=>{
+  const p=findP($("lemail").value);
+  if(!p){$("lerr").textContent="Scrivi prima la tua e-mail.";return}
+  if(confirm(`Per reimpostare la password il profilo di ${p.nome} ${p.cognome} e tutti i suoi dati vengono eliminati. Potrai ripristinarli solo da un backup, dopo esserti registrato di nuovo. Continuare?`)){delProfile(p);showAuth(false)}
+};
+
+let pend;
+const pMsg=(t,ok)=>{$("pmsg").className=ok?"ok":"bad";$("pmsg").textContent=t};
+function renderProf(){
+  if(!cur)return;
+  $("pnome").value=cur.nome;$("pcogn").value=cur.cognome;$("puni").value=cur.uni;$("plf").value="";pend=undefined;
+  $("plogo").innerHTML=crest(cur.uni,cur.logo,72);$("pname").textContent=cur.nome+" "+cur.cognome;$("pmail").textContent=cur.email;
+  $("who").textContent=cur.nome+" "+cur.cognome;$("pmsg").textContent="";
+}
+$("plf").onchange=e=>{
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=()=>{const im=new Image();
+    im.onload=()=>{const k=Math.min(1,256/Math.max(im.width,im.height)),c=document.createElement("canvas");
+      c.width=Math.max(1,Math.round(im.width*k));c.height=Math.max(1,Math.round(im.height*k));
+      c.getContext("2d").drawImage(im,0,0,c.width,c.height);pend=c.toDataURL("image/png");$("plogo").innerHTML=crest($("puni").value||cur.uni,pend,72)};
+    im.onerror=()=>pMsg("Immagine non valida.");im.src=r.result};
+  r.readAsDataURL(f);
+};
+async function pFind(){
+  const u=$("puni").value.trim();
+  if(u.length<3){pMsg("Scrivi prima il nome dell’università.");return}
+  pMsg("Cerco il logo…",true);
+  const lg=await fetchLogo(u);
+  if(lg){pend=lg;$("plogo").innerHTML=crest(u,lg,72);pMsg("Logo trovato: premi Salva profilo per tenerlo.",true)}
+  else pMsg("Logo non trovato online: puoi caricarlo tu dal dispositivo.");
+}
+$("plfind").onclick=pFind;
+$("puni").onchange=()=>{if(pend===undefined&&cur&&$("puni").value.trim()!==cur.uni)pFind()};
+$("plrm").onclick=()=>{pend="";$("plf").value="";$("plogo").innerHTML=crest($("puni").value||cur.uni,"",72)};
+$("pf").onsubmit=ev=>{
+  ev.preventDefault();
+  const ps=getP(),i=ps.findIndex(x=>x.id===cur.id);if(i<0)return;
+  Object.assign(ps[i],{nome:$("pnome").value.trim(),cognome:$("pcogn").value.trim(),uni:$("puni").value.trim()});
+  if(pend!==undefined)ps[i].logo=pend;else if($("puni").value.trim()!==cur.uni)ps[i].logo="";
+  setP(ps);cur=ps[i];setAppleIcon(cur.logo||"");renderProf();pMsg("Profilo salvato.",true);
+};
+
+const setMsg=(t,ok)=>{$("lmsg").className=ok?"ok":"bad";$("lmsg").textContent=t};
+function renderSet(){$("lmsg").textContent="";if(cur){$("lusr").defaultValue=cur.email;$("lusr").value=cur.email}}
+secure($("lf"),async()=>{
+  const bad=t=>{setMsg(t);return null};
+  if(!(await checkPw(cur,$("lcur").value)))return bad("La password attuale non è corretta.");
+  const n=$("lnew").value;
+  if(n.length<4)return bad("La nuova password deve avere almeno 4 caratteri.");
+  if(n!==$("lrep").value)return bad("Le due nuove password non coincidono.");
+  const ps=getP(),i=ps.findIndex(x=>x.id===cur.id),salt=rnd();
+  ps[i].salt=salt;ps[i].hash=await hc(n,salt,newMode());setP(ps);cur=ps[i];
+  return()=>{storeCred(cur.email,n);$("lf").reset();$("lusr").value=cur.email;setMsg("Password cambiata.",true)};
+});
+$("lout").onclick=logout;
+$("ldel").onclick=async()=>{
+  if(!(await checkPw(cur,$("lcur").value))){setMsg("Per eliminare il profilo scrivi prima la password attuale.");return}
+  if(confirm("Eliminare definitivamente il profilo e tutti i suoi dati?")){delProfile(cur);logout()}
+};
+
+const cap=t=>t.charAt(0).toUpperCase()+t.slice(1);
+let calM=new Date();calM.setDate(1);let calSel=null;
+const dDiff=d=>Math.round((new Date(d+"T12:00:00")-new Date(iso(new Date())+"T12:00:00"))/864e5);
+const when=g=>g===0?"oggi":g===1?"domani":g===-1?"ieri":g>0?"tra "+g+" giorni":(-g)+" giorni fa";
+const apps=()=>(S.appelli=S.appelli||[]);
+const upcoming=()=>apps().filter(a=>dDiff(a.data)>=0).sort((x,y)=>(x.data+(x.ora||"")).localeCompare(y.data+(y.ora||"")));
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+function examPhrase(a,g){
+  const nm=cur.nome,e=a.nome,w=when(g);let L;
+  if(g<=1)L=[`${nm}, ${e} è ${w}: ripasso leggero, una buona notte di sonno e fiducia in quello che hai studiato.`,`${g===0?"Oggi":"Domani"} c’è ${e}: respira, ${nm}. Hai già fatto il lavoro più difficile.`];
+  else if(g<=7)L=[`Ultima settimana per ${e}, ${nm}: ripassa i punti deboli e fai qualche prova a tempo.`,`${nm}, ${e} è ${w}: ogni giorno di ripasso, adesso, vale doppio.`];
+  else L=[`${nm}, ${e} è ${w}: dividi gli argomenti nei giorni che restano e rispetta il piano.`,`Prepararsi un po’ ogni giorno batte la notte prima, ${nm}: ${e} è ${w}.`,`Un argomento alla volta, ${nm}: ${e} è ${w} e hai il tempo per arrivarci con calma.`];
+  if(S.exams.length)L.push(`Hai già superato ${S.exams.length} ${S.exams.length===1?"esame":"esami"}, ${nm}: puoi farcela anche con ${e}.`);
+  return pick(L);
+}
+const noExamPhrase=()=>pick([`${cur.nome}, non ci sono esami in programma, ma il momento migliore per prepararsi è adesso.`,`Nessun impegno in calendario per ora: usa questo tempo per portarti avanti con lo studio, ${cur.nome}.`,`Periodo libero da esami, ${cur.nome}: prepararsi comunque adesso renderà tutto più leggero dopo.`]);
+function calHTML(y,m,mini){
+  const by={};apps().forEach(a=>(by[a.data]=by[a.data]||[]).push(a));
+  const off=(new Date(y,m,1).getDay()+6)%7,n=new Date(y,m+1,0).getDate(),t=iso(new Date());
+  let h=["lun","mar","mer","gio","ven","sab","dom"].map(x=>`<div class="cgh">${mini?x[0]:x}</div>`).join("");
+  for(let i=0;i<off;i++)h+=`<span class="cd empty"></span>`;
+  for(let d=1;d<=n;d++){
+    const k=iso(new Date(y,m,d)),e=by[k],cl="cd"+(k===t?" today":"")+(k===calSel&&!mini?" sel":"")+(e?" has":"");
+    h+=mini?`<span class="${cl}"${e?` title="${esc(e.map(a=>a.nome).join(", "))}"`:""}>${d}</span>`:
+      `<button type="button" class="${cl}" data-d="${k}" aria-label="${d} ${new Date(y,m,d).toLocaleDateString("it-IT",{month:"long"})}${e?", "+e.length+" esami":""}">${d}${e?`<span class="cdot">${e.length}</span>`:""}</button>`;
+  }
+  return `<div class="cg${mini?" mini":""}">${h}</div>`;
+}
+function renderCal(){
+  $("clabel").textContent=cap(calM.toLocaleDateString("it-IT",{month:"long",year:"numeric"}));
+  $("cgrid").innerHTML=calHTML(calM.getFullYear(),calM.getMonth(),false);
+  if(calSel){
+    const l=apps().filter(a=>a.data===calSel),dl=cap(new Date(calSel+"T12:00:00").toLocaleDateString("it-IT",{weekday:"long",day:"numeric",month:"long"}));
+    $("cday").innerHTML=`<b>${dl}</b>: `+(l.length?l.map(a=>esc(a.nome)+(a.ora?" alle "+a.ora:"")).join(", "):"nessun esame.");
+  }else $("cday").textContent="Tocca un giorno per scegliere la data del nuovo esame.";
+  const all=[...upcoming(),...apps().filter(a=>dDiff(a.data)<0).sort((x,y)=>y.data.localeCompare(x.data))];
+  $("clist").innerHTML=all.length?all.map(a=>{const g=dDiff(a.data);
+    return `<div class="ex${g<0?" past":""}"><div class="when">${new Date(a.data+"T12:00:00").toLocaleDateString("it-IT",{day:"numeric",month:"short"})}${a.ora?"<br><small>"+a.ora+"</small>":""}</div><div style="flex:1;min-width:140px">${esc(a.nome)}${a.note?`<small style="display:block;color:var(--mute)">${esc(a.note)}</small>`:""}<span class="cdn">${when(g)}</span></div><button type="button" class="ghost sm" data-tolib="${a.id}">Nel libretto</button><button type="button" class="ghost sm" data-cdel="${a.id}">Elimina</button></div>`}).join(""):
+    `<div class="empty">Nessun esame in programma. Aggiungine uno dal modulo.</div>`;
+}
+$("cgrid").onclick=ev=>{const b=ev.target.closest("[data-d]");if(!b)return;calSel=b.dataset.d;$("cdata").value=calSel;renderCal()};
+$("cprev").onclick=()=>{calM.setMonth(calM.getMonth()-1);renderCal()};
+$("cnext").onclick=()=>{calM.setMonth(calM.getMonth()+1);renderCal()};
+$("ctoday").onclick=()=>{calM=new Date();calM.setDate(1);calSel=iso(new Date());$("cdata").value=calSel;renderCal()};
+$("cf").onsubmit=ev=>{
+  ev.preventDefault();
+  const nm=$("cnome").value.trim(),d=$("cdata").value;if(!nm||!d)return;
+  apps().push({id:Date.now().toString(36),nome:nm,data:d,ora:$("cora").value,note:$("cnote").value.trim()});save();
+  $("cf").reset();$("cdata").value=d;calSel=d;calM=new Date(d+"T12:00:00");calM.setDate(1);renderCal();
+};
+$("clist").onclick=ev=>{
+  const b=ev.target.closest("button");if(!b)return;
+  if(b.dataset.cdel&&confirm("Eliminare questo esame dal calendario?")){S.appelli=apps().filter(a=>a.id!==b.dataset.cdel);save();renderCal()}
+  if(b.dataset.tolib){const a=apps().find(x=>x.id===b.dataset.tolib);if(!a)return;show("libretto");resetForm();$("nome").value=a.nome;$("data").value=a.data;$("cfu").focus()}
+};
+$("hopencal").onclick=()=>openSec("calendar");
+
+const MOODS=[["great","Alla grande","Che bella energia, {n}! Usala per l’attività più impegnativa della giornata."],["good","Bene","Bene così, {n}: costanza e un passo alla volta."],["soso","Così così","Capita, {n}. Parti da una cosa piccola: poi diventa più facile."],["tired","Stanchezza","Concediti pause brevi, {n}: meglio un’ora concentrata che tre distratte."],["stress","Stress","Respira, {n}. Scegli una sola priorità per oggi: il resto può aspettare."]];
+const HOURS=["1 ora","2 ore","3 ore","4 o più"];
+function goHome(){
+  document.querySelector(".app").classList.add("onhome");$("home").hidden=false;window.scrollTo(0,0);
+  $("hphr").textContent=phrase(cur);$("hpmsg").textContent="";
+  const up=upcoming();$("hexam").textContent=up.length?examPhrase(up[0],dDiff(up[0].data)):noExamPhrase();
+  renderHome();
+}
+function openSec(v){$("home").hidden=true;document.querySelector(".app").classList.remove("onhome");show(v)}
+function renderHome(){
+  if(!cur)return;
+  const now=new Date(),t=iso(now),h=now.getHours(),st=stats();
+  S.moods=S.moods||{};S.hours=S.hours||{};
+  $("hlogo").innerHTML=crest(cur.uni,cur.logo,64);
+  $("hhi").textContent=(h<5?"Buonanotte":h<13?"Buongiorno":h<18?"Buon pomeriggio":"Buonasera")+", "+cur.nome;
+  $("hmoodq").textContent="Come stai, "+cur.nome+"?";
+  const m=S.moods[t],mm=MOODS.find(x=>x[0]===m);
+  $("hmood").innerHTML=MOODS.map(x=>`<button type="button" class="chip" data-mood="${x[0]}" aria-pressed="${m===x[0]}">${x[1]}</button>`).join("");
+  $("hmoodr").textContent=mm?mm[2].split("{n}").join(cur.nome):"";
+  $("hhours").innerHTML=HOURS.map((x,i)=>`<button type="button" class="chip" data-hours="${i}" aria-pressed="${S.hours[t]===i}">${x}</button>`).join("");
+  $("hhoursr").textContent=S.hours[t]!==undefined?"Obiettivo di oggi: "+HOURS[S.hours[t]]+" di studio. Buon lavoro!":"";
+  const ts=S.tasks.filter(x=>x.daily?t>=x.data:x.data===t),dn=ts.filter(x=>x.done[t]).length;
+  const up=upcoming(),ref=up.length?new Date(up[0].data+"T12:00:00"):now;
+  $("hmini").innerHTML=`<b style="display:block;margin-bottom:6px">${cap(ref.toLocaleDateString("it-IT",{month:"long",year:"numeric"}))}</b>`+calHTML(ref.getFullYear(),ref.getMonth(),true);
+  $("hnext").innerHTML=up.length?up.slice(0,4).map(a=>`<div class="ex"><div class="when">${new Date(a.data+"T12:00:00").toLocaleDateString("it-IT",{day:"numeric",month:"short"})}</div><div style="flex:1">${esc(a.nome)}<span class="cdn" style="display:block">${when(dDiff(a.data))}${a.ora?", ore "+a.ora:""}</span></div></div>`).join(""):`<p style="margin:0"><b>Per questo periodo non ci sono impegni.</b><br>Prepararsi comunque per gli esami è sempre la scelta migliore: un po’ di studio oggi alleggerisce i giorni difficili.</p>`;
+  $("htiles").innerHTML=[
+    ["libretto","Libretto",S.exams.length?`${S.exams.length} esami, ${st.cfuAll} CFU, media ${fmt(st.pond)}`:"Ancora nessun esame inserito"],
+    ["planner","Planning giornaliero",ts.length?`Oggi: ${dn} di ${ts.length} attività fatte`:"Nessuna attività per oggi"],
+    ["calendar","Calendario",up.length?`${up[0].nome}, ${when(dDiff(up[0].data))}`:"Nessun esame in programma"],
+    ["profile","Profilo",`${cur.nome} ${cur.cognome}, ${cur.uni}`],
+    ["settings","Impostazioni","Password e sessione"]
+  ].map(x=>`<button type="button" class="htile" data-go="${x[0]}"><span class="ht">${x[1]}</span><span class="hs">${esc(x[2])}</span></button>`).join("");
+}
+$("hmood").onclick=ev=>{const b=ev.target.closest("[data-mood]");if(!b)return;S.moods=S.moods||{};S.moods[iso(new Date())]=b.dataset.mood;save();renderHome()};
+$("hhours").onclick=ev=>{const b=ev.target.closest("[data-hours]");if(!b)return;S.hours=S.hours||{};S.hours[iso(new Date())]=+b.dataset.hours;save();renderHome()};
+$("hf").onsubmit=ev=>{ev.preventDefault();const tx=$("hprio").value.trim();if(!tx)return;S.tasks.push({id:Date.now().toString(36),testo:tx,daily:false,data:iso(new Date()),done:{}});save();$("hprio").value="";$("hpmsg").textContent="Aggiunta al planning di oggi.";renderHome()};
+$("htiles").onclick=ev=>{const b=ev.target.closest("[data-go]");if(b)openSec(b.dataset.go)};
+$("hout").onclick=logout;
+
+setAppleIcon("");
+let sess=storeGet(localStorage,SK)||storeGet(sessionStorage,SK);
+const sp=sess&&findP(sess);
+if(sp)enter(sp,!!storeGet(localStorage,SK));else showAuth(false);
+</script>
+</body>
+</html>
